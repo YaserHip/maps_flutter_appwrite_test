@@ -20,7 +20,11 @@ class _PageMapState extends ConsumerState<PageMap> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text("MAP"),
+      ),
       body: GoogleMap(
+        myLocationEnabled: true,
         initialCameraPosition: _kGooglePlex,
         mapType: MapType.normal,
         onMapCreated: (controller) => _controller.complete(controller),
