@@ -16,6 +16,8 @@ class RepositoryMap {
         collectionId: AWPaths().routeNamesCollection);
   }
 
+  Future<models.DocumentList> getRoutesIDs
+
   // ignore: todo
   //TODO: get all the routes with a DocumentList and then add the ID to the routes of the realtime subscriber
   RealtimeSubscription getRoutesByID(String routeID) {
