@@ -16,12 +16,14 @@ class RepositoryMap {
         collectionId: AWPaths().routeNamesCollection);
   }
 
-  Future<models.DocumentList> getRoutesIDs
+  Future<models.DocumentList> getRoutesIDs(String routesID) async {
+    return await databases.listDocuments(
+        databaseId: AWPaths().databaseID,
+        collectionId: AWPaths().userInfoCollection,
+        queries: [Query.equal('ruteID', routesID)]);
+  }
 
-  // ignore: todo
-  //TODO: get all the routes with a DocumentList and then add the ID to the routes of the realtime subscriber
-  RealtimeSubscription getRoutesByID(String routeID) {
-    return realtime
-        .subscribe(['databases.${AWPaths().databaseID}.collections']);
+  RealtimeSubscription getRoutesByID(List<String> routeList) {
+    return realtime.subscribe(routeList);
   }
 }
