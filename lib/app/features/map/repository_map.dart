@@ -1,6 +1,10 @@
 import 'package:appwrite/appwrite.dart';
 import 'package:appwrite/models.dart' as models;
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:maps_flutter_appwrite_test/app/aw_paths.dart';
+
+import '../../app_providers.dart';
+import '../login/repository_auth.dart';
 
 class RepositoryMap {
   RepositoryMap(
@@ -27,3 +31,8 @@ class RepositoryMap {
     return realtime.subscribe(routeList);
   }
 }
+
+final repositoryMap = Provider<RepositoryMap>(((ref) => RepositoryMap(
+    userID: ref.watch(repositoryAuthProvider).userID,
+    realtime: ref.watch(AWRealTimeProvider),
+    databases: ref.watch(AWDatabaseProvider))));
