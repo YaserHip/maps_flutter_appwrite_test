@@ -20,6 +20,12 @@ class RepositoryMap {
         collectionId: AWPaths().routeNamesCollection);
   }
 
+  Future<models.DocumentList> getRoutesList() async {
+    return await databases.listDocuments(
+        databaseId: AWPaths().databaseID,
+        collectionId: AWPaths().routeNamesCollection);
+  }
+
   Future<models.DocumentList> getRoutesIDs(String routesID) async {
     return await databases.listDocuments(
         databaseId: AWPaths().databaseID,
@@ -32,7 +38,7 @@ class RepositoryMap {
   }
 }
 
-final repositoryMap = Provider<RepositoryMap>(((ref) => RepositoryMap(
+final repositoryMapProvider = Provider<RepositoryMap>(((ref) => RepositoryMap(
     userID: ref.watch(repositoryAuthProvider).userID,
     realtime: ref.watch(AWRealTimeProvider),
     databases: ref.watch(AWDatabaseProvider))));
