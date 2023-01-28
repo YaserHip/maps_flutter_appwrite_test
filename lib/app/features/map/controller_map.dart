@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:appwrite/models.dart' as models;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:maps_flutter_appwrite_test/app/features/map/repository_map.dart';
 import 'package:maps_flutter_appwrite_test/app/features/models/model_location.dart';
@@ -17,11 +16,16 @@ class ControllerMap extends AutoDisposeAsyncNotifier<void> {
 
   //TODO:transfor all the request to streams realtime and all the deletes and updates on controller…
 
-  Future<List<ModelRoute>>? getRoutesList() {
+  Future<List<ModelRoute>> getRoutesList() async {
     state = const AsyncLoading().copyWithPrevious(state);
-    state = AsyncValue.guard(() => repositoryMap.getRoutesList())
-        as AsyncValue<void>;
-    return null;
+    final listOfRoutes = await repositoryMap.getRoutesList();
+    state = AsyncData(listOfRoutes);
+
+    return listOfRoutes.documents.map(
+      (e) {
+        return e.convertTo((p0) => ModelRoute.fromMap(p0));
+      },
+    ).toList();
   }
 
   Future<bool> getRoutesAndSetMarks(String routeID) async {

@@ -26,7 +26,7 @@ class ModelRoute {
     };
   }
 
-  factory ModelRoute.fromMap(Map<String, dynamic> map) {
+  factory ModelRoute.fromMap(Map<dynamic, dynamic> map) {
     return ModelRoute(
       id: map[r'$id'] as String,
       name: map['name'] as String,
