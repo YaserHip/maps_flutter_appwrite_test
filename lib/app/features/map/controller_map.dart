@@ -17,7 +17,7 @@ class ControllerMap extends AutoDisposeAsyncNotifier<void> {
   //TODO:transfor all the request to streams realtime and all the deletes and updates on controller…
 
   Future<List<ModelRoute>> getRoutesList() async {
-    state = const AsyncLoading().copyWithPrevious(state);
+    state = const AsyncLoading();
     final listOfRoutes = await repositoryMap.getRoutesList();
     state = AsyncData(listOfRoutes);
 
@@ -45,3 +45,6 @@ class ControllerMap extends AutoDisposeAsyncNotifier<void> {
     return true;
   }
 }
+
+final controllerMapProvider =
+    AutoDisposeAsyncNotifierProvider<ControllerMap, void>(ControllerMap.new);
