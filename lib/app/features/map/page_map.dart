@@ -32,6 +32,7 @@ class _PageMapState extends ConsumerState<PageMap> {
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(controllerMapProvider);
+    final mapController = ref.read(controllerMapProvider.notifier);
 
     return Scaffold(
         appBar: AppBar(
@@ -41,7 +42,7 @@ class _PageMapState extends ConsumerState<PageMap> {
           fit: StackFit.expand,
           children: [
             FutureBuilder<List<ModelRoute>>(
-              future: ref.read(controllerMapProvider.notifier).getRoutesList(),
+              future: mapController.getRoutesList(),
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
                   return DropdownButton(
