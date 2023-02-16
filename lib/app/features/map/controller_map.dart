@@ -46,5 +46,20 @@ class ControllerMap extends AutoDisposeAsyncNotifier<void> {
   }
 }
 
+final getRoutesListProvider =
+    AutoDisposeFutureProvider<List<ModelRoute>>((ref) async {
+  final repository = ref.watch(repositoryMapProvider);
+  final listOfRoutes = await repository.getRoutesList();
+  final list = listOfRoutes.documents.map(
+    (e) {
+      return e.convertTo((p0) => ModelRoute.fromMap(p0));
+    },
+  ).toList();
+
+  list.add(const ModelRoute(id: "0", name: "name"));
+
+  return list;
+});
+
 final controllerMapProvider =
     AutoDisposeAsyncNotifierProvider<ControllerMap, void>(ControllerMap.new);

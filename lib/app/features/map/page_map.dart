@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:maps_flutter_appwrite_test/app/features/map/controller_map.dart';
 import 'package:maps_flutter_appwrite_test/app/features/models/model_route.dart';
+import 'package:maps_flutter_appwrite_test/app/widgets/custom_dropdown.dart';
 
 class PageMap extends ConsumerStatefulWidget {
   const PageMap({super.key});
@@ -18,6 +19,8 @@ class _PageMapState extends ConsumerState<PageMap> {
   );
   Map<MarkerId, Marker> markers = <MarkerId, Marker>{};
 
+  String _dropDownValue = "0";
+
   void _onMapCreated(GoogleMapController controller) async {
     const marker = Marker(
       markerId: MarkerId("1234"),
@@ -29,39 +32,47 @@ class _PageMapState extends ConsumerState<PageMap> {
     });
   }
 
+  void dropDownCallBack(String? itemSelected) {
+    setState(() {
+      _dropDownValue = itemSelected!;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    final state = ref.watch(controllerMapProvider);
-    final mapController = ref.read(controllerMapProvider.notifier);
+    final getRoutesList = ref.watch(getRoutesListProvider);
 
     return Scaffold(
         appBar: AppBar(
           title: const Text("MAP"),
         ),
         body: Stack(
-          fit: StackFit.expand,
           children: [
-            FutureBuilder<List<ModelRoute>>(
-              future: mapController.getRoutesList(),
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  return DropdownButton(
-                      items: snapshot.data
-                          ?.map<DropdownMenuItem<ModelRoute>>((e) =>
-                              DropdownMenuItem(value: e, child: Text(e.name)))
-                          .toList(),
-                      onChanged: ((value) {}));
-                } else {
-                  return const CircularProgressIndicator();
-                }
-              },
-            ),
             GoogleMap(
               myLocationEnabled: true,
               initialCameraPosition: _kGooglePlex,
               mapType: MapType.normal,
               onMapCreated: _onMapCreated,
               markers: markers.values.toSet(),
+            ),
+            getRoutesList.when(
+              data: (prodList) {
+                return CustomDropDown(
+                  width: MediaQuery.of(context).size.width,
+                  margin: const EdgeInsets.fromLTRB(10, 12, 70, 5),
+                  changed: dropDownCallBack,
+                  value: _dropDownValue,
+                  items: prodList
+                      .map<DropdownMenuItem<String>>((e) => DropdownMenuItem(
+                          value: e.id,
+                          child: Text(
+                            e.name,
+                          )))
+                      .toList(),
+                );
+              },
+              error: (e, st) => Center(child: Text(e.toString())),
+              loading: () => const Center(child: CircularProgressIndicator()),
             ),
           ],
         ));
