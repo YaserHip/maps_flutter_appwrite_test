@@ -32,14 +32,18 @@ class _PageMapState extends ConsumerState<PageMap> {
     });
   }
 
-  void dropDownCallBack(String? itemSelected) {
+  void dropDownCallBack(String? itemSelected) async {
     setState(() {
       _dropDownValue = itemSelected!;
     });
+    final listRoutes = await ref
+        .read(controllerMapProvider.notifier)
+        .getRoutesAndSetMarks(itemSelected!);
   }
 
   @override
   Widget build(BuildContext context) {
+    final state = ref.watch(controllerMapProvider);
     final getRoutesList = ref.watch(getRoutesListProvider);
 
     return Scaffold(
@@ -48,6 +52,15 @@ class _PageMapState extends ConsumerState<PageMap> {
         ),
         body: Stack(
           children: [
+            state.isLoading
+                ? Container(
+                    color: Colors.white60,
+                    width: MediaQuery.of(context).size.width,
+                    child: const Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                  )
+                : Container(),
             GoogleMap(
               myLocationEnabled: true,
               initialCameraPosition: _kGooglePlex,

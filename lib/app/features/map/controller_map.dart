@@ -14,21 +14,7 @@ class ControllerMap extends AutoDisposeAsyncNotifier<void> {
 
   RepositoryMap get repositoryMap => ref.read(repositoryMapProvider);
 
-  //TODO:transfor all the request to streams realtime and all the deletes and updates on controller…
-
-  Future<List<ModelRoute>> getRoutesList() async {
-    state = const AsyncLoading();
-    final listOfRoutes = await repositoryMap.getRoutesList();
-    state = AsyncData(listOfRoutes);
-
-    return listOfRoutes.documents.map(
-      (e) {
-        return e.convertTo((p0) => ModelRoute.fromMap(p0));
-      },
-    ).toList();
-  }
-
-  Future<bool> getRoutesAndSetMarks(String routeID) async {
+  Future<List<String>> getRoutesAndSetMarks(String routeID) async {
     state = const AsyncLoading().copyWithPrevious(state);
     final list = await repositoryMap.getRoutesIDs(routeID);
 
@@ -42,7 +28,9 @@ class ControllerMap extends AutoDisposeAsyncNotifier<void> {
       return 'databases.${AWPaths().databaseID}.collections.${AWPaths().userInfoCollection}.documents.${e.id}';
     }).toList();
 
-    return true;
+    state = AsyncData(listString);
+
+    return listString;
   }
 }
 
