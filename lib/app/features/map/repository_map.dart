@@ -27,10 +27,11 @@ class RepositoryMap {
   }
 
   Future<models.DocumentList> getRoutesIDs(String routesID) async {
+    print("route:$routesID");
     return await databases.listDocuments(
         databaseId: AWPaths().databaseID,
         collectionId: AWPaths().userInfoCollection,
-        queries: [Query.equal('ruteID', routesID)]);
+        queries: [Query.equal('asdddcccc', '-106.414996')]);
   }
 
   RealtimeSubscription getRoutesByID(List<String> routeList) {
