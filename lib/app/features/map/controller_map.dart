@@ -18,8 +18,6 @@ class ControllerMap extends AutoDisposeAsyncNotifier<void> {
     state = const AsyncLoading().copyWithPrevious(state);
     final list = await repositoryMap.getRoutesIDs(routeID);
 
-    print("lista1: ${list.toMap()}");
-
     final locationsList = list.documents.map((e) {
       return e.convertTo<ModelLocation>((p0) {
         return ModelLocation.fromMap(p0);

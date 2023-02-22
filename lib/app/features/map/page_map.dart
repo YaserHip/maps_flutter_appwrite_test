@@ -36,7 +36,6 @@ class _PageMapState extends ConsumerState<PageMap> {
     setState(() {
       _dropDownValue = itemSelected!;
     });
-    print("itemSelected: $itemSelected");
     if (itemSelected != "0") {
       final listRoutes = await ref
           .read(controllerMapProvider.notifier)

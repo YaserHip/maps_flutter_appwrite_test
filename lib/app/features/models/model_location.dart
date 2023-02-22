@@ -40,7 +40,7 @@ class ModelLocation {
   factory ModelLocation.fromMap(Map<dynamic, dynamic> map) {
     return ModelLocation(
       id: map[r'$id'] as String,
-      ruteID: map['ruteID'] as String,
+      ruteID: map['routeid'] as String,
       lat: map['lat'] as String,
       lon: map['lon'] as String,
     );
