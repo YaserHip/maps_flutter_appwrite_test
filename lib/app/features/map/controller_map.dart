@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:maps_flutter_appwrite_test/app/features/map/repository_map.dart';
 import 'package:maps_flutter_appwrite_test/app/features/models/model_location.dart';
@@ -51,3 +52,13 @@ final getRoutesListProvider =
 
 final controllerMapProvider =
     AutoDisposeAsyncNotifierProvider<ControllerMap, void>(ControllerMap.new);
+
+final markersStreamProvider =
+    StreamProvider.autoDispose.family<void, List<String>>((ref, list) {
+  final repoMap = ref.watch(repositoryMapProvider);
+  return repoMap.getRoutesByID(list).stream.map((event) {
+    if (event.events.contains("databases.*.collections.*.documents")) {
+      print('MARKERS RESULT: ${event.payload}');
+    }
+  });
+});

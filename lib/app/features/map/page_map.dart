@@ -36,12 +36,17 @@ class _PageMapState extends ConsumerState<PageMap> {
     setState(() {
       _dropDownValue = itemSelected!;
     });
+    ref.watch(markersStreamProvider([])).;
     if (itemSelected != "0") {
       final listRoutes = await ref
           .read(controllerMapProvider.notifier)
           .getRoutesAndSetMarks(itemSelected!);
 
       print("lista: ${listRoutes.toString()}");
+
+      ref
+          .watch(markersStreamProvider(listRoutes))
+          .when(data: (data) {}, error: (error, r) {}, loading: () {});
     }
   }
 
