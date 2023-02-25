@@ -54,11 +54,14 @@ final controllerMapProvider =
     AutoDisposeAsyncNotifierProvider<ControllerMap, void>(ControllerMap.new);
 
 final markersStreamProvider =
-    StreamProvider.autoDispose.family<void, List<String>>((ref, list) {
+    StreamProvider.autoDispose.family<String, List<String>>((ref, list) {
   final repoMap = ref.watch(repositoryMapProvider);
   return repoMap.getRoutesByID(list).stream.map((event) {
-    if (event.events.contains("databases.*.collections.*.documents")) {
+    if (event.events.contains("databases.*.collections.*.documents.*.update")) {
       print('MARKERS RESULT: ${event.payload}');
+      return event.payload.toString();
+    } else {
+      return '';
     }
   });
 });

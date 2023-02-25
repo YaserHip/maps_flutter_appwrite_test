@@ -36,7 +36,7 @@ class _PageMapState extends ConsumerState<PageMap> {
     setState(() {
       _dropDownValue = itemSelected!;
     });
-    ref.watch(markersStreamProvider([])).;
+
     if (itemSelected != "0") {
       final listRoutes = await ref
           .read(controllerMapProvider.notifier)
@@ -44,9 +44,9 @@ class _PageMapState extends ConsumerState<PageMap> {
 
       print("lista: ${listRoutes.toString()}");
 
-      ref
-          .watch(markersStreamProvider(listRoutes))
-          .when(data: (data) {}, error: (error, r) {}, loading: () {});
+      ref.watch(markersStreamProvider(listRoutes).stream).listen((event) {
+        print('ASDASDASD: $event');
+      });
     }
   }
 
