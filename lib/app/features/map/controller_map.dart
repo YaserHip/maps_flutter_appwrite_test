@@ -1,8 +1,9 @@
 import 'dart:async';
-import 'dart:math';
+import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:maps_flutter_appwrite_test/app/features/map/repository_map.dart';
 import 'package:maps_flutter_appwrite_test/app/features/models/model_location.dart';
+import 'package:maps_flutter_appwrite_test/app/features/models/model_markers_response.dart';
 import 'package:maps_flutter_appwrite_test/app/features/models/model_route.dart';
 
 import '../../aw_paths.dart';
@@ -15,7 +16,14 @@ class ControllerMap extends AutoDisposeAsyncNotifier<void> {
 
   RepositoryMap get repositoryMap => ref.read(repositoryMapProvider);
 
-  Future<List<String>> getRoutesAndSetMarks(String routeID) async {
+  Stream<String> getMarketsUpdate(List<String> list) {
+    return repositoryMap.getRoutesByID(list).stream.map((event) {
+      print('asdasd:${event.payload.toString()}');
+      return event.payload.toString();
+    });
+  }
+
+  Future<ModelMarkersResponse> getRoutesAndSetMarks(String routeID) async {
     state = const AsyncLoading().copyWithPrevious(state);
     final list = await repositoryMap.getRoutesIDs(routeID);
 
@@ -31,7 +39,8 @@ class ControllerMap extends AutoDisposeAsyncNotifier<void> {
 
     state = AsyncData(listString);
 
-    return listString;
+    return ModelMarkersResponse(
+        listOfLocations: locationsList, listOfStreamingRoutes: listString);
   }
 }
 
@@ -55,13 +64,9 @@ final controllerMapProvider =
 
 final markersStreamProvider =
     StreamProvider.autoDispose.family<String, List<String>>((ref, list) {
-  final repoMap = ref.watch(repositoryMapProvider);
-  return repoMap.getRoutesByID(list).stream.map((event) {
-    if (event.events.contains("databases.*.collections.*.documents.*.update")) {
-      print('MARKERS RESULT: ${event.payload}');
-      return event.payload.toString();
-    } else {
-      return '';
-    }
-  });
+  final controller = ref.watch(controllerMapProvider.notifier);
+
+  //final asd = List<String>.from(json.decode(list));
+
+  return controller.getMarketsUpdate(list);
 });

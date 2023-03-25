@@ -1,8 +1,10 @@
 import 'package:appwrite/appwrite.dart';
 import 'package:appwrite/models.dart' as models;
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:maps_flutter_appwrite_test/app/app_providers.dart';
 import 'package:maps_flutter_appwrite_test/app/aw_paths.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+
+part 'repository_auth.g.dart';
 
 class RepositoryAuth {
   RepositoryAuth({required this.account, required this.databases});
@@ -10,23 +12,23 @@ class RepositoryAuth {
   String userID = "";
   Databases databases;
 
-  Future<void> oAuth2Session(String provider) async {
-    final value = await account.createOAuth2Session(provider: provider);
-    var user = await account.get();
+  Future<bool> oAuth2Session(String provider) async {
+    try {
+      await account.createOAuth2Session(provider: provider);
 
-    userID = user.$id;
-    return value;
-  }
+      var user = await account.get();
+      userID = user.$id;
 
-  Future<models.Token> magicURLSession(String email) async {
-    var value =
-        await account.createMagicURLSession(userId: 'unique()', email: email);
-    userID = value.userId;
-    return value;
-  }
+      try {
+        await checkIfUserExist();
+      } on Exception catch (e, _) {
+        await createUserDocument();
+      }
 
-  Future<models.Session> magicURLSessionConfirmation(String secret) async {
-    return await account.updateMagicURLSession(userId: userID, secret: secret);
+      return true;
+    } on Exception catch (e, _) {
+      return false;
+    }
   }
 
   Future<models.Document> checkIfUserExist() async {
@@ -45,6 +47,13 @@ class RepositoryAuth {
   }
 }
 
-final repositoryAuthProvider = Provider<RepositoryAuth>((ref) => RepositoryAuth(
+@riverpod
+RepositoryAuth repositoryAuth(RepositoryAuthRef ref) => RepositoryAuth(
     account: ref.watch(AWAccountProvider),
-    databases: ref.watch(AWDatabaseProvider)));
+    databases: ref.watch(AWDatabaseProvider));
+
+@riverpod
+Future<bool> oAuth2Session(OAuth2SessionRef ref, {required String provider}) {
+  final repoLogin = ref.watch(repositoryAuthProvider).oAuth2Session(provider);
+  return repoLogin;
+}

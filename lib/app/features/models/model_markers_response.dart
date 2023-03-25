@@ -11,30 +11,4 @@ class ModelMarkersResponse {
 
   final List<ModelLocation> listOfLocations;
   final List<String> listOfStreamingRoutes;
-
-  ModelMarkersResponse copyWith({
-    List<ModelLocation>? listOfLocations,
-    List<String>? listOfStreamingRoutes,
-  }) {
-    return ModelMarkersResponse(
-      listOfLocations: listOfLocations ?? this.listOfLocations,
-      listOfStreamingRoutes:
-          listOfStreamingRoutes ?? this.listOfStreamingRoutes,
-    );
-  }
-
-  @override
-  String toString() =>
-      'ModelMarkersResponse(listOfLocations: $listOfLocations, listOfStreamingRoutes: $listOfStreamingRoutes)';
-
-  @override
-  bool operator ==(covariant ModelMarkersResponse other) {
-    if (identical(this, other)) return true;
-
-    return listEquals(other.listOfLocations, listOfLocations) &&
-        listEquals(other.listOfStreamingRoutes, listOfStreamingRoutes);
-  }
-
-  @override
-  int get hashCode => listOfLocations.hashCode ^ listOfStreamingRoutes.hashCode;
 }

@@ -6,7 +6,8 @@ final AWClientProvider = Provider<Client>((ref) {
   Client client = Client();
   client
       .setEndpoint('http://donjabonoso.monster/v1')
-      .setProject('634cdbb2f3ef2733fff7');
+      .setProject('640ba01c35febb60c9b4')
+      .setSelfSigned(status: true);
   return client;
 });
 

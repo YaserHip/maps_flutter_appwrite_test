@@ -1,8 +1,11 @@
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:maps_flutter_appwrite_test/app/features/map/controller_map.dart';
-import 'package:maps_flutter_appwrite_test/app/features/models/model_route.dart';
+import 'package:maps_flutter_appwrite_test/app/features/models/model_markers_response.dart';
 import 'package:maps_flutter_appwrite_test/app/widgets/custom_dropdown.dart';
 
 class PageMap extends ConsumerStatefulWidget {
@@ -21,6 +24,8 @@ class _PageMapState extends ConsumerState<PageMap> {
 
   String _dropDownValue = "0";
 
+  ProviderSubscription<AsyncValue<String>>? streamSub = null;
+
   void _onMapCreated(GoogleMapController controller) async {
     const marker = Marker(
       markerId: MarkerId("1234"),
@@ -32,28 +37,30 @@ class _PageMapState extends ConsumerState<PageMap> {
     });
   }
 
-  void dropDownCallBack(String? itemSelected) async {
-    setState(() {
-      _dropDownValue = itemSelected!;
-    });
-
-    if (itemSelected != "0") {
-      final listRoutes = await ref
-          .read(controllerMapProvider.notifier)
-          .getRoutesAndSetMarks(itemSelected!);
-
-      print("lista: ${listRoutes.toString()}");
-
-      ref.watch(markersStreamProvider(listRoutes).stream).listen((event) {
-        print('ASDASDASD: $event');
-      });
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(controllerMapProvider);
     final getRoutesList = ref.watch(getRoutesListProvider);
+
+    void dropDownCallBack(String? itemSelected) async {
+      setState(() {
+        _dropDownValue = itemSelected!;
+      });
+
+      if (itemSelected != "0") {
+        final listRoutes = await ref
+            .read(controllerMapProvider.notifier)
+            .getRoutesAndSetMarks(itemSelected!);
+
+        print("lista: ${listRoutes.listOfStreamingRoutes}");
+
+        ref.listenManual(
+            markersStreamProvider(listRoutes.listOfStreamingRoutes),
+            (previous, next) {
+          print('asdasdada111: ${next.value}');
+        });
+      }
+    }
 
     return Scaffold(
         appBar: AppBar(

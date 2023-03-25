@@ -33,28 +33,6 @@ class ControllerLogin extends StateNotifier<AsyncValue<void>> {
     return state.hasError == false;
   }
 
-  Future<bool> magicURLSession(String email) async {
-    try {
-      state = const AsyncLoading();
-      final value = await repositoryAuth.magicURLSession(email);
-      state = AsyncData(value);
-    } on Exception catch (e, trace) {
-      state = AsyncError(e, trace);
-    }
-    return state.hasError == false;
-  }
-
-  Future<bool> magicURLSessionConfirmation(String secret) async {
-    try {
-      state = const AsyncLoading();
-      final value = await repositoryAuth.magicURLSessionConfirmation(secret);
-      state = AsyncData(value);
-    } on Exception catch (e, trace) {
-      state = AsyncError(e, trace);
-    }
-    return state.hasError == false;
-  }
-
   Future<void> askForLocationPermission() async {
     await location.requestService();
     await location.requestPermission();
@@ -83,6 +61,6 @@ class ControllerLogin extends StateNotifier<AsyncValue<void>> {
 final loginControllerProvider =
     StateNotifierProvider<ControllerLogin, AsyncValue<void>>((ref) {
   return ControllerLogin(
-      repositoryAuth: ref.watch(repositoryAuthProvider),
+      repositoryAuth: ref.read(repositoryAuthProvider),
       location: ref.watch(locationServiceProvider));
 });
