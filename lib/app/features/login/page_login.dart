@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:maps_flutter_appwrite_test/app/features/login/controller_login.dart';
+import 'package:maps_flutter_appwrite_test/app/features/login/repository_auth.dart';
 import 'package:maps_flutter_appwrite_test/app/routing/app_route.dart';
 
 class PageLogin extends ConsumerStatefulWidget {
@@ -42,17 +43,23 @@ class _PageLoginState extends ConsumerState<PageLogin> {
                     ElevatedButton(
                       child: const Text("Google"),
                       onPressed: () async {
-                        final isLocationGranted = await ref
+                        /*  final isLocationGranted = await ref
                             .read(loginControllerProvider.notifier)
-                            .checkLocationPermissions();
+                            .checkLocationPermissions(); */
 
-                        if (isLocationGranted) {
+                        /* if (isLocationGranted) {
                           final success = await ref
                               .read(loginControllerProvider.notifier)
                               .oAuth2Session("google");
                           if (success) {
                             nav.goNamed(AppRoute.home.name);
                           }
+                        } */
+                        final success = await ref
+                            .read(repositoryAuthProvider)
+                            .oAuth2Session('google');
+                        if (success) {
+                          nav.goNamed(AppRoute.home.name);
                         }
                       },
                     ),
