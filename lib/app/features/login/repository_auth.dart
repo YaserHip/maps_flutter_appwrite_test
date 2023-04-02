@@ -22,16 +22,19 @@ class RepositoryAuth {
       try {
         await checkIfUserExist();
       } on Exception catch (e, _) {
+        print('errorAuthCheckIfExist: $e');
         await createUserDocument();
       }
 
       return true;
     } on Exception catch (e, _) {
+      print('errorCreateOAuth2Session: $e');
       return false;
     }
   }
 
   Future<models.Document> checkIfUserExist() async {
+    print('userid: $userID');
     return await databases.getDocument(
         databaseId: AWPaths().databaseID,
         collectionId: AWPaths().userInfoCollection,
@@ -43,7 +46,7 @@ class RepositoryAuth {
         databaseId: AWPaths().databaseID,
         collectionId: AWPaths().userInfoCollection,
         documentId: userID,
-        data: {'lat': '0', 'lon': '0'});
+        data: {'lat': '0', 'lon': '0', 'routeid': '0'});
   }
 }
 
@@ -54,6 +57,6 @@ RepositoryAuth repositoryAuth(RepositoryAuthRef ref) => RepositoryAuth(
 
 @riverpod
 Future<bool> oAuth2Session(OAuth2SessionRef ref, {required String provider}) {
-  final repoLogin = ref.watch(repositoryAuthProvider).oAuth2Session(provider);
-  return repoLogin;
+  final repo = ref.watch(repositoryAuthProvider).oAuth2Session(provider);
+  return repo;
 }

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:maps_flutter_appwrite_test/app/features/map/controller_map.dart';
+import 'package:maps_flutter_appwrite_test/app/features/map/repository_map.dart';
 import 'package:maps_flutter_appwrite_test/app/features/models/model_markers_response.dart';
 import 'package:maps_flutter_appwrite_test/app/widgets/custom_dropdown.dart';
 
@@ -40,7 +41,6 @@ class _PageMapState extends ConsumerState<PageMap> {
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(controllerMapProvider);
-    final getRoutesList = ref.watch(getRoutesListProvider);
 
     void dropDownCallBack(String? itemSelected) async {
       setState(() {
@@ -48,9 +48,12 @@ class _PageMapState extends ConsumerState<PageMap> {
       });
 
       if (itemSelected != "0") {
-        final listRoutes = await ref
+        final listRoutes =
+            await ref.read(getListOfMarkersPosProvider(itemSelected!).future);
+
+        final listRoutes2 = await ref
             .read(controllerMapProvider.notifier)
-            .getRoutesAndSetMarks(itemSelected!);
+            .getRoutesAndSetMarks(itemSelected);
 
         print("lista: ${listRoutes.listOfStreamingRoutes}");
 
@@ -84,25 +87,27 @@ class _PageMapState extends ConsumerState<PageMap> {
               onMapCreated: _onMapCreated,
               markers: markers.values.toSet(),
             ),
-            getRoutesList.when(
-              data: (prodList) {
-                return CustomDropDown(
-                  width: MediaQuery.of(context).size.width,
-                  margin: const EdgeInsets.fromLTRB(10, 12, 70, 5),
-                  changed: dropDownCallBack,
-                  value: _dropDownValue,
-                  items: prodList
-                      .map<DropdownMenuItem<String>>((e) => DropdownMenuItem(
-                          value: e.id,
-                          child: Text(
-                            e.name,
-                          )))
-                      .toList(),
-                );
-              },
-              error: (e, st) => Center(child: Text(e.toString())),
-              loading: () => const Center(child: CircularProgressIndicator()),
-            ),
+            ref.watch(getRoutesListProvider).when(
+                  data: (prodList) {
+                    return CustomDropDown(
+                      width: MediaQuery.of(context).size.width,
+                      margin: const EdgeInsets.fromLTRB(10, 12, 70, 5),
+                      changed: dropDownCallBack,
+                      value: _dropDownValue,
+                      items: prodList
+                          .map<DropdownMenuItem<String>>(
+                              (e) => DropdownMenuItem(
+                                  value: e.id,
+                                  child: Text(
+                                    e.name,
+                                  )))
+                          .toList(),
+                    );
+                  },
+                  error: (e, st) => Center(child: Text(e.toString())),
+                  loading: () =>
+                      const Center(child: CircularProgressIndicator()),
+                ),
           ],
         ));
   }

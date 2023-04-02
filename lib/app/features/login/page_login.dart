@@ -21,7 +21,7 @@ class _PageLoginState extends ConsumerState<PageLogin> {
   @override
   void initState() {
     super.initState();
-    _getLocationPermission();
+    //_getLocationPermission();
   }
 
   _getLocationPermission() async {
@@ -58,7 +58,9 @@ class _PageLoginState extends ConsumerState<PageLogin> {
                         final success = await ref
                             .read(repositoryAuthProvider)
                             .oAuth2Session('google');
+                        print('success: $success');
                         if (success) {
+                          print('success: 1');
                           nav.goNamed(AppRoute.home.name);
                         }
                       },

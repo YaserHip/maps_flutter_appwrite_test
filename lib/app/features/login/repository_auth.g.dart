@@ -21,7 +21,7 @@ final repositoryAuthProvider = AutoDisposeProvider<RepositoryAuth>.internal(
 );
 
 typedef RepositoryAuthRef = AutoDisposeProviderRef<RepositoryAuth>;
-String _$oAuth2SessionHash() => r'294495fc739dec7094b16518e1493eb3ac6f556f';
+String _$oAuth2SessionHash() => r'555eedcc2b82b230b34d44694feaaa340cd1dc58';
 
 /// Copied from Dart SDK
 class _SystemHash {
