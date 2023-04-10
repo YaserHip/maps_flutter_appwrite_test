@@ -16,8 +16,8 @@ class ControllerMap extends AutoDisposeAsyncNotifier<void> {
 
   RepositoryMap get repositoryMap => ref.read(repositoryMapProvider);
 
-  Stream<String> getMarketsUpdate(List<String> list) {
-    return repositoryMap.getRoutesByID(list).stream.map((event) {
+  Stream<String>? getMarketsUpdate(List<String> list) {
+    return repositoryMap.getRoutesByID(list)?.stream.map((event) {
       print('asdasd:${event.payload.toString()}');
       return event.payload.toString();
     });
@@ -46,12 +46,3 @@ class ControllerMap extends AutoDisposeAsyncNotifier<void> {
 
 final controllerMapProvider =
     AutoDisposeAsyncNotifierProvider<ControllerMap, void>(ControllerMap.new);
-
-final markersStreamProvider =
-    StreamProvider.autoDispose.family<String, List<String>>((ref, list) {
-  final controller = ref.watch(controllerMapProvider.notifier);
-
-  //final asd = List<String>.from(json.decode(list));
-
-  return controller.getMarketsUpdate(list);
-});

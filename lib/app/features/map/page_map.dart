@@ -47,18 +47,20 @@ class _PageMapState extends ConsumerState<PageMap> {
         _dropDownValue = itemSelected!;
       });
 
+      if (streamSub != null) {
+        streamSub?.close();
+        print('stoped stream');
+        ref.watch(repositoryMapProvider).cancelSubRealtime();
+      }
+
       if (itemSelected != "0") {
         final listRoutes =
             await ref.read(getListOfMarkersPosProvider(itemSelected!).future);
 
-        final listRoutes2 = await ref
-            .read(controllerMapProvider.notifier)
-            .getRoutesAndSetMarks(itemSelected);
-
         print("lista: ${listRoutes.listOfStreamingRoutes}");
 
-        ref.listenManual(
-            markersStreamProvider(listRoutes.listOfStreamingRoutes),
+        streamSub = ref.listenManual(
+            streamMarkersPosProvider(list: listRoutes.listOfStreamingRoutes),
             (previous, next) {
           print('asdasdada111: ${next.value}');
         });

@@ -19,6 +19,8 @@ class RepositoryMap {
   Realtime realtime;
   Databases databases;
 
+  RealtimeSubscription? _subscription = null;
+
   Future<models.DocumentList> getRouteNames() async {
     return await databases.listDocuments(
         databaseId: AWPaths().databaseID,
@@ -38,8 +40,15 @@ class RepositoryMap {
         queries: [Query.equal('routeid', routesID)]);
   }
 
-  RealtimeSubscription getRoutesByID(List<String> routeList) {
-    return realtime.subscribe(routeList);
+  cancelSubRealtime() async {
+    if (_subscription != null) {
+      await _subscription?.close.call();
+    }
+  }
+
+  RealtimeSubscription? getRoutesByID(List<String> routeList) {
+    _subscription = realtime.subscribe(routeList);
+    return _subscription;
   }
 }
 
@@ -88,5 +97,10 @@ Stream<String> streamMarkersPos(StreamMarkersPosRef ref,
     {required List<String> list}) {
   final repo = ref.watch(repositoryMapProvider);
 
-  return Stream.fromIterable(['a']);
+  final stream = repo.getRoutesByID(list)?.stream.map((event) {
+    print('asdasd:${event.payload.toString()}');
+    return event.payload.toString();
+  });
+
+  return stream!;
 }

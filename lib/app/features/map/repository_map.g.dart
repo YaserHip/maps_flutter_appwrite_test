@@ -145,7 +145,7 @@ class GetListOfMarkersPosProvider
   }
 }
 
-String _$streamMarkersPosHash() => r'daed889fd1ae63b13ae4e42fe82e0b1252cc3ca5';
+String _$streamMarkersPosHash() => r'29a0348b82c37e0c21545fe1fc1ae054ae0aeb95';
 typedef StreamMarkersPosRef = AutoDisposeStreamProviderRef<String>;
 
 /// See also [streamMarkersPos].
