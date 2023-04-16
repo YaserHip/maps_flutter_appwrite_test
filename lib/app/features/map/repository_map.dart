@@ -93,13 +93,13 @@ Future<ModelMarkersResponse> getListOfMarkersPos(
 }
 
 @riverpod
-Stream<String> streamMarkersPos(StreamMarkersPosRef ref,
+Stream<ModelLocation> streamMarkersPos(StreamMarkersPosRef ref,
     {required List<String> list}) {
   final repo = ref.watch(repositoryMapProvider);
 
   final stream = repo.getRoutesByID(list)?.stream.map((event) {
     print('asdasd:${event.payload.toString()}');
-    return event.payload.toString();
+    return ModelLocation.fromMap(event.payload);
   });
 
   return stream!;

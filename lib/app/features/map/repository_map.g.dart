@@ -145,15 +145,15 @@ class GetListOfMarkersPosProvider
   }
 }
 
-String _$streamMarkersPosHash() => r'29a0348b82c37e0c21545fe1fc1ae054ae0aeb95';
-typedef StreamMarkersPosRef = AutoDisposeStreamProviderRef<String>;
+String _$streamMarkersPosHash() => r'6971ede0e17ef659d972d9cd4de122c335e83fed';
+typedef StreamMarkersPosRef = AutoDisposeStreamProviderRef<ModelLocation>;
 
 /// See also [streamMarkersPos].
 @ProviderFor(streamMarkersPos)
 const streamMarkersPosProvider = StreamMarkersPosFamily();
 
 /// See also [streamMarkersPos].
-class StreamMarkersPosFamily extends Family<AsyncValue<String>> {
+class StreamMarkersPosFamily extends Family<AsyncValue<ModelLocation>> {
   /// See also [streamMarkersPos].
   const StreamMarkersPosFamily();
 
@@ -191,7 +191,8 @@ class StreamMarkersPosFamily extends Family<AsyncValue<String>> {
 }
 
 /// See also [streamMarkersPos].
-class StreamMarkersPosProvider extends AutoDisposeStreamProvider<String> {
+class StreamMarkersPosProvider
+    extends AutoDisposeStreamProvider<ModelLocation> {
   /// See also [streamMarkersPos].
   StreamMarkersPosProvider({
     required this.list,

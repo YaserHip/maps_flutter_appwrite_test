@@ -9,6 +9,8 @@ import 'package:maps_flutter_appwrite_test/app/features/map/repository_map.dart'
 import 'package:maps_flutter_appwrite_test/app/features/models/model_markers_response.dart';
 import 'package:maps_flutter_appwrite_test/app/widgets/custom_dropdown.dart';
 
+import '../models/model_location.dart';
+
 class PageMap extends ConsumerStatefulWidget {
   const PageMap({super.key});
 
@@ -25,7 +27,7 @@ class _PageMapState extends ConsumerState<PageMap> {
 
   String _dropDownValue = "0";
 
-  ProviderSubscription<AsyncValue<String>>? streamSub = null;
+  ProviderSubscription<AsyncValue<ModelLocation>>? streamSub = null;
 
   void _onMapCreated(GoogleMapController controller) async {
     const marker = Marker(
@@ -47,6 +49,10 @@ class _PageMapState extends ConsumerState<PageMap> {
         _dropDownValue = itemSelected!;
       });
 
+      setState(() {
+        markers.clear();
+      });
+
       if (streamSub != null) {
         streamSub?.close();
         print('stoped stream');
@@ -59,10 +65,38 @@ class _PageMapState extends ConsumerState<PageMap> {
 
         print("lista: ${listRoutes.listOfStreamingRoutes}");
 
+        for (int i = 0; i < listRoutes.listOfLocations.length; i++) {
+          final item = listRoutes.listOfLocations[i];
+          final markerID = MarkerId(item.id);
+          final markerItem = Marker(
+              markerId: markerID,
+              position: LatLng(double.parse(item.lat), double.parse(item.lon)));
+
+          markers[markerID] = markerItem;
+        }
+
+        setState(() {
+          markers;
+        });
+
         streamSub = ref.listenManual(
             streamMarkersPosProvider(list: listRoutes.listOfStreamingRoutes),
             (previous, next) {
-          print('asdasdada111: ${next.value}');
+          final item = next.value;
+          final itemFound = markers.keys.firstWhere(
+              (element) => markers[element]!.markerId.value == next.value!.id);
+
+          markers.update(
+              itemFound,
+              (value) => Marker(
+                  markerId: itemFound,
+                  position:
+                      LatLng(double.parse(item!.lat), double.parse(item.lon))));
+
+          setState(() {
+            markers;
+          });
+          print('asdasdada111: ${next.value.toString()}');
         });
       }
     }
